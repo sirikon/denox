@@ -1,6 +1,7 @@
 import { exists } from "std/fs/mod.ts";
 import { writeFile } from "../../fs/mod.ts";
-import { bash, cmd, cmdOutput } from "../../shell/mod.ts";
+import { must } from "../../result/mod.ts";
+import { bash, cmd } from "../../shell/mod.ts";
 
 export type Package = {
   name: string;
@@ -68,11 +69,13 @@ export const ensurePackages = async (...packages: string[]) => {
   if (packagesToInstall.length === 0) return;
 
   await refreshPackages();
-  await cmd(
-    "apt-get",
-    "install",
-    "-y",
-    ...packagesToInstall,
+  must(
+    await cmd([
+      "apt-get",
+      "install",
+      "-y",
+      ...packagesToInstall,
+    ]),
   );
 };
 
@@ -91,17 +94,19 @@ const getKeyringFilePath = ([name]: [string, string]) =>
 
 async function refreshPackages() {
   if (ALREADY_REFRESHED) return;
-  await cmd("apt-get", "update");
+  must(await cmd(["apt-get", "update"]));
   ALREADY_REFRESHED = true;
 }
 
 const getInstalledPackages = async () => {
-  const output = await cmdOutput(
-    "bash",
-    "-c",
-    "dpkg --get-selections | grep -v deinstall",
+  const result = must(
+    await cmd([
+      "bash",
+      "-c",
+      "dpkg --get-selections | grep -v deinstall",
+    ], { stdout: "piped" }),
   );
-  return output
+  return (await result.output())
     .trim()
     .split("\n")
     .map((line) => line.split("\t")[0].split(":")[0]);

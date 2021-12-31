@@ -1,20 +1,34 @@
-const cmdBase = async (args: string[], pipeStdout: boolean) => {
+import { Result } from "../result/mod.ts";
+
+export type CmdResult = Result<
+  { output: () => Promise<string> },
+  { code: number }
+>;
+export type CmdOptions = Omit<Deno.RunOptions, "cmd">;
+
+export const cmd = async (
+  args: string[],
+  opts?: CmdOptions,
+): Promise<CmdResult> => {
   const process = Deno.run({
     cmd: args,
-    stdout: pipeStdout ? "piped" : "inherit",
+    ...opts,
   });
   const status = await process.status();
-  if (!status.success) {
-    Deno.exit(status.code);
+  if (status.success) {
+    return {
+      success: true,
+      output: () => process.output().then((d) => new TextDecoder().decode(d)),
+    };
   }
-  return process;
+  return {
+    success: false,
+    code: status.code,
+    error: new Error("uh"),
+  };
 };
 
-export const cmd = (...args: string[]) => cmdBase(args, false);
-export const cmdOutput = async (...args: string[]) => {
-  const process = await cmdBase(args, true);
-  return new TextDecoder().decode(await process.output());
-};
-
-export const bash = (script: string) => cmd("bash", "-c", script);
-export const sh = (script: string) => cmd("sh", "-c", script);
+export const bash = (script: string, opts?: CmdOptions) =>
+  cmd(["bash", "-c", script], opts);
+export const sh = (script: string, opts?: CmdOptions) =>
+  cmd(["sh", "-c", script], opts);
