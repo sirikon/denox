@@ -1,4 +1,4 @@
-import { assertUnreachable } from "../../assertUnreachable.ts";
+import { assertUnreachable } from "../../types/mod.ts";
 
 const encoder = new TextEncoder();
 

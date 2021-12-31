@@ -1,10 +1,11 @@
 import { Result } from "../result/mod.ts";
+import { ExactOmit } from "../types/mod.ts";
 
 export type CmdResult = Result<
   { output: () => Promise<string> },
   { code: number }
 >;
-export type CmdOptions = Omit<Deno.RunOptions, "cmd">;
+export type CmdOptions = ExactOmit<Deno.RunOptions, "cmd">;
 
 export const cmd = async (
   args: string[],

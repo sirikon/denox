@@ -1,4 +1,4 @@
-import { assertUnreachable } from "../../assertUnreachable.ts";
+import { assertUnreachable } from "../../types/mod.ts";
 import { CommandData } from "./command.ts";
 import { CommandGroupBuilder, CommandGroupData } from "./commandGroup.ts";
 import { help } from "./help.ts";
