@@ -25,7 +25,7 @@ export const cmd = async (
   return {
     success: false,
     code: status.code,
-    error: new Error("uh"),
+    error: new Error("Process failed with status code " + status.code),
   };
 };
 
