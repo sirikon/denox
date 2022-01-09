@@ -1,5 +1,5 @@
 export type Result<T, E> =
-  | ({ success: true; } & T)
+  | ({ success: true } & T)
   | ({ success: false; error: Error } & E);
 
 export const must = <T, E>(result: Result<T, E>): T => {
