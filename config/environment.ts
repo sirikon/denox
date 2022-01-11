@@ -4,9 +4,12 @@ export type ConfigFromEnvironmentData = {
 
 export type ConfigFromEnvironmentParam = {
   name: string;
-  opts?: {
-    default?: string;
-  };
+  opts?: ConfigFromEnvironmentParamOpts<unknown>;
+};
+
+export type ConfigFromEnvironmentParamOpts<TParam> = {
+  default?: string;
+  map?: (value: string) => TParam;
 };
 
 export class ConfigFromEnvironmentBuilder<
@@ -16,12 +19,12 @@ export class ConfigFromEnvironmentBuilder<
     private _data: ConfigFromEnvironmentData,
   ) {}
 
-  public key<TParamKey extends string>(
+  public key<TParamKey extends string, TParam>(
     name: TParamKey,
-    opts?: NonNullable<ConfigFromEnvironmentParam["opts"]>,
+    opts?: ConfigFromEnvironmentParamOpts<TParam>,
   ) {
     return new ConfigFromEnvironmentBuilder<
-      TConfig & { [key in TParamKey]: string }
+      TConfig & { [key in TParamKey]: TParam }
     >(
       {
         ...this._data,
@@ -35,15 +38,16 @@ export class ConfigFromEnvironmentBuilder<
   }
 
   public read(): TConfig {
-    const result: Record<string, string> = {};
+    const result: Record<string, unknown> = {};
     for (const param of this._data.params) {
       const value = Deno.env.get(param.name);
+      const mapper = param.opts?.map || ((v: string) => v);
       if (value) {
-        result[param.name] = value;
+        result[param.name] = mapper(value);
         continue;
       }
       if (param.opts?.default) {
-        result[param.name] = param.opts.default;
+        result[param.name] = mapper(param.opts.default);
         continue;
       }
       throw new Error(`Missing required environment variable: ${param.name}`);
