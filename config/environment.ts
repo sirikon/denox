@@ -13,7 +13,7 @@ export type ConfigFromEnvironmentParamOpts<TParam> = {
 };
 
 export class ConfigFromEnvironmentBuilder<
-  TConfig extends Record<string, unknown>,
+  TConfig extends Record<never, never>,
 > {
   constructor(
     private _data: ConfigFromEnvironmentData,
