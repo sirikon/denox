@@ -19,7 +19,7 @@ export class ConfigFromEnvironmentBuilder<
     private _data: ConfigFromEnvironmentData,
   ) {}
 
-  public key<TParamKey extends string, TParam>(
+  public key<TParamKey extends string, TParam = string>(
     name: TParamKey,
     opts?: ConfigFromEnvironmentParamOpts<TParam>,
   ) {
