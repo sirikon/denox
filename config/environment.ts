@@ -1,60 +1,61 @@
-export type ConfigFromEnvironmentData = {
-  params: ConfigFromEnvironmentParam[];
-};
+// deno-lint-ignore ban-types
+type Flatter<T> = { [K in keyof T]: T[K] } & {};
 
-export type ConfigFromEnvironmentParam = {
-  name: string;
-  opts?: ConfigFromEnvironmentParamOpts<unknown>;
-};
-
-export type ConfigFromEnvironmentParamOpts<TParam> = {
+type ParamDef<T> = {
+  description: string;
   default?: string;
-  map?: (value: string) => TParam;
+  required?: boolean;
+  map?: (v: string) => T;
 };
 
-export class ConfigFromEnvironmentBuilder<
-  TConfig extends Record<never, never>,
-> {
-  constructor(
-    private _data: ConfigFromEnvironmentData,
-  ) {}
-
-  public key<TParamKey extends string, TParam = string>(
-    name: TParamKey,
-    opts?: ConfigFromEnvironmentParamOpts<TParam>,
-  ) {
-    return new ConfigFromEnvironmentBuilder<
-      TConfig & { [key in TParamKey]: TParam }
-    >(
-      {
-        ...this._data,
-
-        params: [...this._data.params, {
-          name,
-          opts,
-        }],
-      },
-    );
-  }
-
-  public read(): TConfig {
-    const result: Record<string, unknown> = {};
-    for (const param of this._data.params) {
-      const value = Deno.env.get(param.name);
-      const mapper = param.opts?.map || ((v: string) => v);
-      if (value) {
-        result[param.name] = mapper(value);
-        continue;
-      }
-      if (param.opts?.default) {
-        result[param.name] = mapper(param.opts.default);
-        continue;
-      }
-      throw new Error(`Missing required environment variable: ${param.name}`);
+type ConfigStruct<
+  T extends Record<string, ParamDef<unknown>>,
+> = Flatter<
+  Readonly<
+    {
+      [K in keyof T]: T[K]["map"] extends NonNullable<ParamDef<unknown>["map"]>
+        ? T[K]["required"] extends false
+          ? (ReturnType<NonNullable<T[K]["map"]>> | null)
+        : ReturnType<NonNullable<T[K]["map"]>>
+        : T[K]["required"] extends false ? (string | null)
+        : string;
     }
-    return result as TConfig;
-  }
-}
+  >
+>;
 
-export const configFromEnvironment = () =>
-  new ConfigFromEnvironmentBuilder({ params: [] });
+export type ConfigModel = Record<string, ParamDef<unknown>>;
+
+export const buildConfig = <
+  T extends ConfigModel,
+>(
+  model: T,
+) => {
+  return {
+    model: model as ConfigModel,
+    read: () => {
+      const result: Record<string, unknown> = {};
+      for (const param in model) {
+        const paramDef = model[param];
+        const value = Deno.env.get(param);
+        const mapper = paramDef?.map || ((v: string) => v);
+
+        if (value) {
+          result[param] = mapper(value);
+          continue;
+        }
+
+        if (paramDef.default) {
+          result[param] = mapper(paramDef.default);
+          continue;
+        }
+
+        if (paramDef.required == null || paramDef.required === true) {
+          throw new Error(`Missing required environment variable: ${param}`);
+        }
+
+        result[param] = null;
+      }
+      return result as ConfigStruct<T>;
+    },
+  };
+};
