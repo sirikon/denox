@@ -10,7 +10,7 @@ export type CommandData = {
   description?: string;
   params: CommandParam[];
   arguments: string[];
-  action: ((ctx: Record<string, unknown>) => void);
+  action: (ctx: Record<string, unknown>) => void;
 };
 
 export class CommandBuilder<TParams extends Record<string, unknown>> {
