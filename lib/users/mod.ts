@@ -15,6 +15,5 @@ export const ensureUser = (userName: string, groupName: string, home: string) =>
 
 export const getCurrentUser = () =>
   cmd(["id", "-un"], { stdout: "piped" })
-    .then(must)
     .then((r) => r.output())
     .then((d) => d.replaceAll("\n", "").trim());
