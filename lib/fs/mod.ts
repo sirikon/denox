@@ -1,13 +1,16 @@
 import { writeAll } from "std/streams/conversion.ts";
 import { Progress } from "../ui/helpers/progress.ts";
 
+const textEncoder = new TextEncoder();
+const textDecoder = new TextDecoder();
+
 export const writeFile = (path: string, data: string | string[]) =>
   Deno.writeFile(
     path,
-    new TextEncoder().encode(Array.isArray(data) ? data.join("\n") : data),
+    textEncoder.encode(Array.isArray(data) ? data.join("\n") : data),
   );
 
-export const readFile = (path: string) => Deno.readFile(path).then((d) => new TextDecoder().decode(d));
+export const readFile = (path: string) => Deno.readFile(path).then((d) => textDecoder.decode(d));
 
 export const downloadFile = async (
   url: string,
