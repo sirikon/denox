@@ -1,4 +1,3 @@
-import { must } from "../result/mod.ts";
 import { cmd } from "../shell/mod.ts";
 
 export const getRelease = () =>

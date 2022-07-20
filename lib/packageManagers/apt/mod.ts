@@ -1,6 +1,5 @@
 import { exists } from "std/fs/mod.ts";
 import { writeFile } from "../../fs/mod.ts";
-import { must } from "../../result/mod.ts";
 import { bash, cmd } from "../../shell/mod.ts";
 
 export type Package = {
@@ -67,14 +66,12 @@ export const ensurePackages = async (...packages: string[]) => {
   if (packagesToInstall.length === 0) return;
 
   await refreshPackages();
-  must(
-    await cmd([
-      "apt-get",
-      "install",
-      "-y",
-      ...packagesToInstall,
-    ]),
-  );
+  await cmd([
+    "apt-get",
+    "install",
+    "-y",
+    ...packagesToInstall,
+  ]);
 };
 
 const ensureKeyring = async (repo: Repository) => {
@@ -91,18 +88,16 @@ const getKeyringFilePath = ([name]: [string, string]) => `/usr/share/keyrings/${
 
 async function refreshPackages() {
   if (ALREADY_REFRESHED) return;
-  must(await cmd(["apt-get", "update"]));
+  await cmd(["apt-get", "update"]);
   ALREADY_REFRESHED = true;
 }
 
 const getInstalledPackages = async () => {
-  const result = must(
-    await cmd([
-      "bash",
-      "-c",
-      "dpkg --get-selections | grep -v deinstall",
-    ], { stdout: "piped" }),
-  );
+  const result = await cmd([
+    "bash",
+    "-c",
+    "dpkg --get-selections | grep -v deinstall",
+  ], { stdout: "piped" });
   return (await result.output())
     .trim()
     .split("\n")

@@ -1,4 +1,3 @@
-import { must } from "../result/mod.ts";
 import { bash, cmd } from "../shell/mod.ts";
 
 export const ensureGroup = (groupName: string) =>
