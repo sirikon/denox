@@ -34,9 +34,7 @@ function runCommand(cmd: CommandData, args: string[]) {
 
   for (const param of cmd.params) {
     if (param.kind === "option") {
-      const matchingArgPosition = args.findIndex((a) =>
-        a === `--${param.name}`
-      );
+      const matchingArgPosition = args.findIndex((a) => a === `--${param.name}`);
       if (matchingArgPosition === -1) {
         if (param.default == null) {
           console.log(`Required option not found: --${param.name}`);
@@ -51,9 +49,7 @@ function runCommand(cmd: CommandData, args: string[]) {
     }
 
     if (param.kind === "flag") {
-      const matchingArgPosition = args.findIndex((a) =>
-        a === `--${param.name}`
-      );
+      const matchingArgPosition = args.findIndex((a) => a === `--${param.name}`);
       actionContext[param.name] = matchingArgPosition >= 0;
       matchingArgPosition >= 0 && args.splice(matchingArgPosition, 1);
       continue;
@@ -75,5 +71,4 @@ function runCommand(cmd: CommandData, args: string[]) {
   cmd.action(actionContext);
 }
 
-export const cli = (name: string) =>
-  new CommandGroupBuilder({ name, commands: [], groups: [], parent: null });
+export const cli = (name: string) => new CommandGroupBuilder({ name, commands: [], groups: [], parent: null });

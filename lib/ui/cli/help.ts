@@ -16,12 +16,8 @@ export function help(group: CommandGroupData, level = 0) {
   );
   for (const command of group.commands) {
     console.log(
-      `${pad(b + 4)}${bold(command.name)} ${
-        command.arguments.map((a) => `[${a}]`).join(" ")
-      }${
-        command.description && command.arguments.length === 0
-          ? dim(command.description)
-          : ""
+      `${pad(b + 4)}${bold(command.name)} ${command.arguments.map((a) => `[${a}]`).join(" ")}${
+        command.description && command.arguments.length === 0 ? dim(command.description) : ""
       }`,
     );
     if (command.arguments.length > 0 && command.description) {
@@ -29,9 +25,7 @@ export function help(group: CommandGroupData, level = 0) {
     }
     for (const param of command.params) {
       console.log(
-        `${pad(b + 6)}--${param.name}${
-          dim(param.description ? ` ${param.description}` : "")
-        }`,
+        `${pad(b + 6)}--${param.name}${dim(param.description ? ` ${param.description}` : "")}`,
       );
     }
   }

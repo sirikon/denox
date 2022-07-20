@@ -61,5 +61,4 @@ export class TreeNodeBuilder<
   }
 }
 
-export const treeNode = () =>
-  new TreeNodeBuilder<Record<never, never>, never>([], []);
+export const treeNode = () => new TreeNodeBuilder<Record<never, never>, never>([], []);

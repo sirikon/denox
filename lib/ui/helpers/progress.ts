@@ -19,9 +19,7 @@ export class Progress {
   ) {
     if (data.mode === "percent") {
       await writeLine(
-        `${data.prefix}: ${
-          Math.round(data.value * 100).toString().padStart(3, " ")
-        }%`,
+        `${data.prefix}: ${Math.round(data.value * 100).toString().padStart(3, " ")}%`,
       );
       return;
     }
