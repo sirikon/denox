@@ -1,6 +1,9 @@
 // deno-lint-ignore no-explicit-any
 export type Clazz<T> = new (...args: any[]) => T;
 
+// deno-lint-ignore ban-types
+type Flatter<T> = { [K in keyof T]: T[K] } & {};
+
 export type ConsumedType = {
   argument: string;
   clazz: Clazz<unknown>;
@@ -30,7 +33,7 @@ export class TreeNodeBuilder<
     clazz: Clazz<TClazz>,
   ) {
     return new TreeNodeBuilder<
-      TConsumptionRecord & { [key in TArgument]: TClazz[] },
+      Flatter<TConsumptionRecord & { [key in TArgument]: TClazz[] }>,
       TProduction
     >(
       [...this.consumedTypes, { argument, clazz }],
