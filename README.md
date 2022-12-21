@@ -1,3 +1,3 @@
 # denox
 
-Shared code for Deno projects
+Shared code for Deno projects. Requires `std/` import map.
