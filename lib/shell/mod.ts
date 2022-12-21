@@ -19,5 +19,7 @@ export const cmd = async (
   };
 };
 
-export const bash = (script: string, opts?: CmdOptions) => cmd(["bash", "-c", script], opts);
-export const sh = (script: string, opts?: CmdOptions) => cmd(["sh", "-c", script], opts);
+export const bash = (script: string, opts?: CmdOptions) =>
+  cmd(["bash", "-c", script], opts);
+export const sh = (script: string, opts?: CmdOptions) =>
+  cmd(["sh", "-c", script], opts);

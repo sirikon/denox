@@ -10,7 +10,9 @@ export async function processor() {
   const plan = () => {
     initializeParentCount();
 
-    treeNodes.forEach((n) => n.producedTypes.forEach((t) => addProduction(t, n)));
+    treeNodes.forEach((n) =>
+      n.producedTypes.forEach((t) => addProduction(t, n))
+    );
 
     treeNodes.forEach((n) => walk(n));
 
@@ -63,7 +65,8 @@ export async function processor() {
     }
   };
 
-  const initializeParentCount = () => treeNodes.forEach((n) => parentCount.set(n, 0));
+  const initializeParentCount = () =>
+    treeNodes.forEach((n) => parentCount.set(n, 0));
 
   const incrementParentCount = (node: TreeNode, inc: number) =>
     parentCount.set(node, (parentCount.get(node) || 0) + inc);

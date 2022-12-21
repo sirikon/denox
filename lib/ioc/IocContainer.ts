@@ -24,7 +24,11 @@ export class IocContainer {
   private clazzInfo: { [key: number]: ClazzInfo } = {};
   private instances: { [key: number]: unknown } = {};
 
-  public register(clazz: Clazz, dependencies: Clazz[], options: RegistrationOptions) {
+  public register(
+    clazz: Clazz,
+    dependencies: Clazz[],
+    options: RegistrationOptions,
+  ) {
     let index = this.registeredClazzez.indexOf(clazz);
     if (index === -1) {
       index = this.registeredClazzez.push(clazz) - 1;
@@ -32,7 +36,10 @@ export class IocContainer {
     this.clazzInfo[index] = { type: "automatic", dependencies, options };
   }
 
-  public registerProvider<T>(clazz: Clazz<T>, provider: (params: ProviderParams) => T) {
+  public registerProvider<T>(
+    clazz: Clazz<T>,
+    provider: (params: ProviderParams) => T,
+  ) {
     let index = this.registeredClazzez.indexOf(clazz);
     if (index === -1) {
       index = this.registeredClazzez.push(clazz) - 1;
@@ -53,7 +60,9 @@ export class IocContainer {
 
     if (info.type === "automatic") {
       if (this.instances[index] == null) {
-        const dependentInstances = info.dependencies.map((d) => this.resolve(d, clazz));
+        const dependentInstances = info.dependencies.map((d) =>
+          this.resolve(d, clazz)
+        );
         this.instances[index] = new clazz(...dependentInstances);
       }
       return this.instances[index] as T;

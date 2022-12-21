@@ -10,7 +10,8 @@ export const writeFile = (path: string, data: string | string[]) =>
     textEncoder.encode(Array.isArray(data) ? data.join("\n") : data),
   );
 
-export const readFile = (path: string) => Deno.readFile(path).then((d) => textDecoder.decode(d));
+export const readFile = (path: string) =>
+  Deno.readFile(path).then((d) => textDecoder.decode(d));
 
 export const downloadFile = async (
   url: string,
