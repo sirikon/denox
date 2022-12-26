@@ -1,3 +1,5 @@
+import { Logger, LogLevel } from "denox/logging/Logger.ts";
+
 const methodsToHijack = ["log", "debug", "info", "warn", "error"] as const;
 type ConsoleMethod = typeof methodsToHijack[number];
 type ConsoleHijack = (method: ConsoleMethod, data: unknown[]) => void;
@@ -9,4 +11,15 @@ for (const method of methodsToHijack) {
 
 export const setConsoleHijack = (cb: typeof consoleHijack) => {
   consoleHijack = cb;
+};
+
+export const setConsoleHijackLogger = (log: Logger) => {
+  setConsoleHijack((method, data) => {
+    const level: LogLevel = (() => {
+      if (method === "warn") return "warning";
+      if (method === "error") return "warning";
+      return "info";
+    })();
+    log.line(level, `console.${method}: ${data}`);
+  });
 };
