@@ -1,4 +1,4 @@
-import { cmd } from "../shell/mod.ts";
+import { cmd } from "denox/shell/mod.ts";
 
 export const getRelease = () =>
   cmd(["lsb_release", "-cs"], { stdout: "piped" })
