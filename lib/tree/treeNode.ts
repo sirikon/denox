@@ -1,8 +1,7 @@
+import { Flatter } from "denox/types/mod.ts";
+
 // deno-lint-ignore no-explicit-any
 export type Clazz<T> = new (...args: any[]) => T;
-
-// deno-lint-ignore ban-types
-type Flatter<T> = { [K in keyof T]: T[K] } & {};
 
 export type ConsumedType = {
   argument: string;
@@ -64,5 +63,4 @@ export class TreeNodeBuilder<
   }
 }
 
-export const treeNode = () =>
-  new TreeNodeBuilder<Record<never, never>, never>([], []);
+export const treeNode = () => new TreeNodeBuilder<Record<never, never>, never>([], []);

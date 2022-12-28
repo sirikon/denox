@@ -1,8 +1,15 @@
 import { writeAll } from "std/streams/conversion.ts";
-import { Progress } from "../ui/helpers/progress.ts";
+import { Progress } from "denox/ui/helpers/progress.ts";
 
 const textEncoder = new TextEncoder();
 const textDecoder = new TextDecoder();
+
+export const fileExists = (path: string) =>
+  Deno.lstat(path)
+    .then((r) => r.isFile, (e) => {
+      if (e instanceof Deno.errors.NotFound) return false;
+      throw e;
+    });
 
 export const writeFile = (path: string, data: string | string[]) =>
   Deno.writeFile(
@@ -10,8 +17,7 @@ export const writeFile = (path: string, data: string | string[]) =>
     textEncoder.encode(Array.isArray(data) ? data.join("\n") : data),
   );
 
-export const readFile = (path: string) =>
-  Deno.readFile(path).then((d) => textDecoder.decode(d));
+export const readFile = (path: string) => Deno.readFile(path).then((d) => textDecoder.decode(d));
 
 export const downloadFile = async (
   url: string,

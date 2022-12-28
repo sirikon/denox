@@ -32,6 +32,7 @@ export const ensureBasePackages = async () => {
     "gnupg",
     "debian-archive-keyring",
     "debian-keyring",
+    "curl",
   );
 };
 
@@ -61,9 +62,7 @@ export const setPins = async (pins: Pin[]) => {
 
 export const ensurePackages = async (...packages: string[]) => {
   const installedPackages = await getInstalledPackages();
-  const packagesToInstall = packages.filter((p) =>
-    !installedPackages.some((ip) => p === ip)
-  );
+  const packagesToInstall = packages.filter((p) => !installedPackages.some((ip) => p === ip));
 
   if (packagesToInstall.length === 0) return;
 
@@ -86,8 +85,7 @@ const ensureKeyring = async (repo: Repository) => {
   await bash(`curl -fsSL "${url}" | gpg --dearmor -o "${keyringFilePath}"`);
 };
 
-const getKeyringFilePath = ([name]: [string, string]) =>
-  `/usr/share/keyrings/${name}-srkbz-archive-keyring.gpg`;
+const getKeyringFilePath = ([name]: [string, string]) => `/usr/share/keyrings/${name}-srkbz-archive-keyring.gpg`;
 
 async function refreshPackages() {
   if (ALREADY_REFRESHED) return;
@@ -108,9 +106,7 @@ const getInstalledPackages = async () => {
 };
 
 const buildRepoLine = (repo: Repository) => {
-  const keyringFilePath = repo.options?.keyring
-    ? getKeyringFilePath(repo.options.keyring)
-    : null;
+  const keyringFilePath = repo.options?.keyring ? getKeyringFilePath(repo.options.keyring) : null;
 
   const params = [
     ...(repo.options?.arch ? [`arch=${repo.options.arch}`] : []),

@@ -1,5 +1,4 @@
-// deno-lint-ignore ban-types
-type Flatter<T> = { [K in keyof T]: T[K] } & {};
+import { Flatter } from "denox/types/mod.ts";
 
 type ParamDef<T> = {
   description: string;
@@ -14,8 +13,7 @@ type ConfigStruct<
   Readonly<
     {
       [K in keyof T]: T[K]["map"] extends NonNullable<ParamDef<unknown>["map"]>
-        ? T[K]["required"] extends false
-          ? (ReturnType<NonNullable<T[K]["map"]>> | null)
+        ? T[K]["required"] extends false ? (ReturnType<NonNullable<T[K]["map"]>> | null)
         : ReturnType<NonNullable<T[K]["map"]>>
         : T[K]["required"] extends false ? (string | null)
         : string;
